@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inkpad</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <aside class="sidebar" id="sidebar" aria-label="Notes">
+      <div class="side-head">
+        <div class="brand">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="6" fill="var(--accent)"/><rect x="8" y="7" width="16" height="18" rx="1.5" fill="var(--surface)"/><path d="M11.5 7v18" stroke="var(--margin-solid)" stroke-width="1.4"/><path d="M14 12h7M14 16h7M14 20h5" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span>Inkpad</span>
+        </div>
+        <button class="icon-btn" id="btn-new" title="New note (Alt+N)" aria-label="New note" data-icon="plus"></button>
+      </div>
+
+      <button class="folder-chip" id="folder-chip" title="Change where notes are saved">
+        <span data-icon="folder"></span><span id="folder-label">No folder</span>
+      </button>
+
+      <label class="search">
+        <span data-icon="search"></span>
+        <input id="search" type="search" placeholder="Search titles and text" autocomplete="off" spellcheck="false">
+      </label>
+
+      <ul class="note-list" id="note-list" role="listbox" aria-label="All notes"></ul>
+
+      <div class="side-foot">
+        <button class="text-btn" id="btn-today" title="Open today’s note (Alt+D)"><span data-icon="calendar"></span>Today</button>
+        <button class="text-btn" id="btn-palette-side" title="Find anything (Ctrl+K)"><span data-icon="command"></span>Find anything</button>
+      </div>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn" id="btn-sidebar" title="Show or hide notes" aria-label="Show or hide notes" data-icon="sidebar"></button>
+        <div class="title-wrap">
+          <input id="title" class="title" aria-label="Note title" spellcheck="false" autocomplete="off">
+          <span class="ext" id="ext">.md</span>
+        </div>
+        <div class="seg" role="group" aria-label="View">
+          <button data-view="edit" title="Write (Ctrl+E cycles)">Write</button>
+          <button data-view="split" title="Write and preview side by side">Split</button>
+          <button data-view="preview" title="Preview">Read</button>
+        </div>
+        <button class="icon-btn" id="btn-link" title="Insert link to current page (Alt+L)" aria-label="Insert link to current page" data-icon="link"></button>
+        <button class="icon-btn" id="btn-tab" title="Open in a full tab" aria-label="Open in a full tab" data-icon="expand"></button>
+        <button class="icon-btn" id="btn-menu" title="Settings and actions" aria-label="Settings and actions" aria-haspopup="true" data-icon="more"></button>
+      </header>
+
+      <section class="workspace" id="workspace" data-view="edit">
+        <textarea id="editor" class="editor ruled" spellcheck="true" placeholder="Start writing…" aria-label="Note text"></textarea>
+        <article id="preview" class="preview" aria-label="Preview"></article>
+      </section>
+
+      <footer class="statusbar">
+        <span class="save-state" id="save-state"><i class="dot"></i><span id="save-text">Ready</span></span>
+        <span class="spacer"></span>
+        <span id="stat-words">0 words</span>
+        <span id="stat-chars" class="hide-narrow">0 characters</span>
+        <span id="stat-read" class="hide-narrow">1 min read</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Settings / actions menu -->
+  <div class="menu" id="menu" hidden role="dialog" aria-label="Settings and actions">
+    <div class="menu-row">
+      <span class="menu-label">Theme</span>
+      <div class="seg small" data-setting="theme">
+        <button data-value="auto">Auto</button><button data-value="light">Light</button><button data-value="dark">Dark</button>
+      </div>
+    </div>
+    <div class="menu-row">
+      <span class="menu-label">Font</span>
+      <div class="seg small" data-setting="font">
+        <button data-value="serif">Serif</button><button data-value="sans">Sans</button><button data-value="mono">Mono</button>
+      </div>
+    </div>
+    <div class="menu-row">
+      <span class="menu-label">Text size</span>
+      <div class="stepper">
+        <button id="size-down" aria-label="Smaller text">−</button><span id="size-val">16</span><button id="size-up" aria-label="Larger text">+</button>
+      </div>
+    </div>
+    <label class="menu-check"><input type="checkbox" id="opt-ruled"> Ruled paper</label>
+    <label class="menu-check"><input type="checkbox" id="opt-wrap"> Wrap long lines</label>
+    <hr>
+    <button class="menu-item" data-act="download"><span data-icon="download"></span>Download note</button>
+    <button class="menu-item" data-act="copy"><span data-icon="copy"></span>Copy as Markdown</button>
+    <button class="menu-item" data-act="pin"><span data-icon="pin"></span><span id="pin-label">Pin note</span></button>
+    <button class="menu-item" data-act="folder"><span data-icon="folder"></span>Change folder…</button>
+    <button class="menu-item danger" data-act="delete"><span data-icon="trash"></span>Delete note</button>
+  </div>
+
+  <!-- Command palette -->
+  <div class="palette" id="palette" hidden>
+    <div class="palette-card" role="dialog" aria-label="Find anything">
+      <input id="palette-input" placeholder="Jump to a note or run a command" autocomplete="off" spellcheck="false">
+      <ul id="palette-list" role="listbox"></ul>
+    </div>
+  </div>
+
+  <!-- First run / reconnect -->
+  <div class="onboard" id="onboard" hidden>
+    <div class="onboard-card">
+      <svg class="onboard-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="6" fill="var(--accent)"/><rect x="8" y="7" width="16" height="18" rx="1.5" fill="var(--surface)"/><path d="M11.5 7v18" stroke="var(--margin-solid)" stroke-width="1.4"/><path d="M14 12h7M14 16h7M14 20h5" stroke="var(--accent)" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <h1 id="ob-title">Notes that live on your disk</h1>
+      <p id="ob-text">Pick a folder and Inkpad saves every note there as a plain Markdown file. Close Chrome, open the folder in VS Code or your file manager, and your notes are right where you left them.</p>
+      <button class="btn primary" id="ob-primary">Choose a folder</button>
+      <button class="btn ghost" id="ob-secondary">Start without a folder</button>
+      <p class="fine" id="ob-fine">Without a folder, notes stay in Chrome’s extension storage. You can move them into a folder anytime.</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+    <span id="toast-text"></span><button id="toast-action"></button>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
